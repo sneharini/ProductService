@@ -1,6 +1,7 @@
 package com.sneha.productservice.services;
 
 import com.sneha.productservice.dtos.FakeStoreProductDto;
+import com.sneha.productservice.exception.ProductNotFoundException;
 import com.sneha.productservice.models.Category;
 import com.sneha.productservice.models.Product;
 import org.springframework.http.HttpMethod;
@@ -22,16 +23,20 @@ public class FakeStoreProductService implements ProductService{
 
 
     @Override
-    public Product getSingleProduct(Long productId) {
-        throw new ArithmeticException();
+    public Product getSingleProduct(Long productId) throws ProductNotFoundException {
+
         // call FakeStore to fetch the Product with the give id via HTTP call
-//        FakeStoreProductDto fakeStoreProductDto = restTemplate.getForObject(
-//                "https://fakestoreapi.com/products/" + productId,
-//                FakeStoreProductDto.class
-//        );
-//
-//        return convertFakeStoreProductToProduct(fakeStoreProductDto);
+        FakeStoreProductDto fakeStoreProductDto = restTemplate.getForObject(
+                "https://fakestoreapi.com/products/" + productId,
+                FakeStoreProductDto.class
+        );
+
+        if(fakeStoreProductDto == null) {
+            throw new ProductNotFoundException("product with id" + productId + "doesn't exist", productId);
+        }
+        return convertFakeStoreProductToProduct(fakeStoreProductDto);
     }
+
 
     @Override
     public List<Product> getAllProducts() {

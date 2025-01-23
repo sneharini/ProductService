@@ -2,6 +2,7 @@ package com.sneha.productservice.controllerAdvice;
 
 
 import com.sneha.productservice.dtos.ExceptionDto;
+import com.sneha.productservice.exception.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -35,6 +36,21 @@ public class GlobalExceptionHandler {
         ResponseEntity<String>  response = new ResponseEntity<>(
                 "ArrayIndexOutOfBound Exception has happened",
                 HttpStatus.NOT_FOUND
+        );
+        return response;
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ExceptionDto> handleProductNotFoundException(ProductNotFoundException ex){
+
+        Long productId = ex.getProductId();
+        ExceptionDto exceptionDto = new ExceptionDto();
+        exceptionDto.setMessage("ProductNotFoundException has happened");
+        exceptionDto.setSolution("please try again with the valid product id, Invalid id : " + productId);
+
+        ResponseEntity<ExceptionDto> response = new ResponseEntity<>(
+                exceptionDto,
+                HttpStatus.BAD_REQUEST
         );
         return response;
     }

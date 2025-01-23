@@ -1,5 +1,6 @@
 package com.sneha.productservice.Controller;
 
+import com.sneha.productservice.exception.ProductNotFoundException;
 import com.sneha.productservice.models.Product;
 import com.sneha.productservice.services.ProductService;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class ProductController {
 
     //http://localhost:8080/products/10
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable ("id") long id){
+    public ResponseEntity<Product> getProductById(@PathVariable ("id") long id) throws ProductNotFoundException {
 
 //        ResponseEntity<Product> responseEntity = new ResponseEntity<>(
 //                productService.getSingleProduct(id),
