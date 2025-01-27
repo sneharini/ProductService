@@ -11,7 +11,7 @@ import lombok.Setter;
 @Entity //this tells the hiberate to make a table out of this class
 public class Product extends BaseModel{
     private String title;
-    private double price;
+    private Double price;
 
     @ManyToOne
     private Category category;

@@ -4,6 +4,7 @@ import com.sneha.productservice.dtos.FakeStoreProductDto;
 import com.sneha.productservice.exception.ProductNotFoundException;
 import com.sneha.productservice.models.Category;
 import com.sneha.productservice.models.Product;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpMessageConverterExtractor;
@@ -13,7 +14,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Service("fakestoreproductservice")
+//@Primary
 public class FakeStoreProductService implements ProductService{
     // injecting restTemplate into fakestoreProductService
     private RestTemplate restTemplate;
@@ -79,6 +81,16 @@ public class FakeStoreProductService implements ProductService{
     @Override
     public Product replaceProduct(Long productId, Product product) {
         return null;
+    }
+
+    @Override
+    public Product addProduct(Product product) {
+        return null;
+    }
+
+    @Override
+    public void deleteProduct(Long productId) {
+
     }
 
 
