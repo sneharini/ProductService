@@ -5,6 +5,7 @@ import com.sneha.productservice.exception.ProductNotFoundException;
 import com.sneha.productservice.models.Category;
 import com.sneha.productservice.models.Product;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpMessageConverterExtractor;
@@ -19,13 +20,30 @@ import java.util.List;
 public class FakeStoreProductService implements ProductService{
     // injecting restTemplate into fakestoreProductService
     private RestTemplate restTemplate;
-    public FakeStoreProductService(RestTemplate restTemplate) {
+    //injecting redisTemplate into fakestoreProductService
+    private RedisTemplate<String, Object> redisTemplate;
+
+
+    public FakeStoreProductService(RestTemplate restTemplate, RedisTemplate<String, Object> redisTemplate) {
         this.restTemplate = restTemplate;
+        this.redisTemplate = redisTemplate;
     }
 
 
     @Override
     public Product getSingleProduct(Long productId) throws ProductNotFoundException {
+
+        // using redis
+        // try to fetch the product from redis
+        // redis return an object, so need to typecase it with product
+        Product product = (Product) redisTemplate.opsForHash().get("PRODUCTS","PRODUCT" +productId);
+
+        if(product != null){
+            // cache hit
+            return product;
+        }
+        //cache miss
+
 
         // call FakeStore to fetch the Product with the give id via HTTP call
         FakeStoreProductDto fakeStoreProductDto = restTemplate.getForObject(
@@ -36,7 +54,14 @@ public class FakeStoreProductService implements ProductService{
         if(fakeStoreProductDto == null) {
             throw new ProductNotFoundException("product with id" + productId + "doesn't exist", productId);
         }
-        return convertFakeStoreProductToProduct(fakeStoreProductDto);
+
+
+        // before returning, store it in cache
+
+        product = convertFakeStoreProductToProduct(fakeStoreProductDto);
+        // store it in redis
+        redisTemplate.opsForHash().put("PRODUCTS","PRODUCT_" +productId,product);
+        return product;
     }
 
 

@@ -20,7 +20,7 @@ public class ProductController {
     private ProductService productService;
 
     // injecting object using DI
-    public ProductController(@Qualifier("selftproductservice") ProductService productService, ProductRepository productRepository) {
+    public ProductController(@Qualifier("fakestoreproductservice") ProductService productService, ProductRepository productRepository) {
         this.productService = productService;
         this.productRepository = productRepository;
     }
